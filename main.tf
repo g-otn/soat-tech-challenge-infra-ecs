@@ -1,5 +1,5 @@
 provider "aws" {
-  region  = "us-east-2"
+  region     = "us-east-2"
   access_key = var.aws_access_key
   secret_key = var.aws_secret_key
 }
@@ -11,7 +11,7 @@ resource "aws_ecr_repository" "soat-tech-challenge-backend" {
 resource "aws_instance" "ecs_host" {
   ami           = "ami-0fa399d9c130ec923"
   instance_type = "t2.micro"
-  subnet_id = var.subnet_a_id
+  subnet_id     = var.subnet_a_id
 }
 
 resource "aws_ecs_cluster" "soat-tech-challenge-ecs-cluster" {
@@ -66,17 +66,15 @@ resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
 }
 
 resource "aws_alb" "soat-tech-challenge-alb" {
-  name               = "soat-tech-challenge-alb-1" # Naming our load balancer
+  name               = "soat-tech-challenge-alb-1"
   load_balancer_type = "application"
-  subnets = [ # Referencing the default subnets
+  subnets            = [
     var.subnet_a_id,
     var.subnet_b_id
   ]
-  # Referencing the security group
   security_groups = [aws_security_group.soat-tech-challenge-alb-security-group.id]
 }
 
-# Creating a security group for the load balancer:
 resource "aws_security_group" "soat-tech-challenge-alb-security-group" {
   ingress {
     from_port   = 8080
@@ -98,48 +96,46 @@ resource "aws_lb_target_group" "soat-tech-challenge-alb-target-group" {
   port        = 8080
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = var.vpc_id # Referencing the default VPC
+  vpc_id      = var.vpc_id
 }
 
 resource "aws_lb_listener" "soat-tech-challenge-alb-listener" {
-  load_balancer_arn = aws_alb.soat-tech-challenge-alb.arn # Referencing our load balancer
+  load_balancer_arn = aws_alb.soat-tech-challenge-alb.arn
   port              = "8080"
   protocol          = "HTTP"
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.soat-tech-challenge-alb-target-group.arn # Referencing our tagrte group
+    target_group_arn = aws_lb_target_group.soat-tech-challenge-alb-target-group.arn
   }
 }
 
 resource "aws_ecs_service" "soat-tech-challenge-service" {
-  name            = "soat-tech-challenge-service-1"                             # Naming our first service
-  cluster         = aws_ecs_cluster.soat-tech-challenge-ecs-cluster.id             # Referencing our created Cluster
-  task_definition = aws_ecs_task_definition.soat-tech-challenge-ecs-cluster-task.arn # Referencing the task our service will spin up
+  name            = "soat-tech-challenge-service-1"
+  cluster         = aws_ecs_cluster.soat-tech-challenge-ecs-cluster.id
+  task_definition = aws_ecs_task_definition.soat-tech-challenge-ecs-cluster-task.arn
   launch_type     = "EC2"
   desired_count   = 3
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.soat-tech-challenge-alb-target-group.arn # Referencing our target group
+    target_group_arn = aws_lb_target_group.soat-tech-challenge-alb-target-group.arn
     container_name   = aws_ecs_task_definition.soat-tech-challenge-ecs-cluster-task.family
-    container_port   = 3000 # Specifying the container port
+    container_port   = 3000
   }
 
   network_configuration {
-    subnets          = [
+    subnets = [
       var.subnet_a_id, var.subnet_b_id
     ]
-    assign_public_ip = true                                                # Providing our containers with public IPs
-    security_groups  = [aws_security_group.soat-tech-challenge-service-security-group.id] # Setting the security group
+    assign_public_ip = true
+    security_groups  = [aws_security_group.soat-tech-challenge-service-security-group.id]
   }
 }
 
-
 resource "aws_security_group" "soat-tech-challenge-service-security-group" {
   ingress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
-    # Only allowing traffic in from the load balancer security group
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
     security_groups = [aws_security_group.soat-tech-challenge-alb-security-group.id]
   }
 
