@@ -17,46 +17,50 @@ data "aws_db_instance" "db_instance" {
 }
 
 resource "aws_ecs_task_definition" "soat_ecs_cluster_task" {
-  family                   = "soat-ecs-cluster-task"
-  container_definitions    = <<DEFINITION
-  [
-    {
-      "name": "soat-ecs-cluster-task",
-      "image": "${aws_ecr_repository.soat_backend_image.repository_url}",
-      "essential": true,
-      "portMappings": [
-        {
-          "containerPort": 8080,
-          "hostPort": 8080
-        }
-      ],
-      "environment": [
-        {
-          "name": "DB_USERNAME",
-          "value": "${var.ecs_container_db_username}"
+  family                = "soat-ecs-cluster-task"
+  container_definitions = jsonencode(
+    [
+      {
+        name : "soat-ecs-cluster-task",
+        image : aws_ecr_repository.soat_backend_image.repository_url,
+        essential : true,
+        portMappings : [
+          {
+            containerPort : 8080,
+            hostPort : 8080
+          }
+        ],
+        environment : [
+          {
+            name : "DB_USERNAME",
+            value : var.ecs_container_db_username
+          },
+          {
+            name : "DB_PASSWORD",
+            value : var.ecs_container_db_password
+          },
+          {
+            name : "DB_NAME",
+            value : var.ecs_container_db_name
+          },
+          {
+            name : "DB_HOST",
+            value : data.aws_db_instance.db_instance.endpoint
+          }
+        ]
+        memory : 512,
+        cpu : 256,
+        logConfiguration : {
+          logDriver : "awslogs",
+          options : {
+            awslogs-create-group : "true",
+            awslogs-group : "awslogs-backend",
+            awslogs-region : "us-east-2",
+            awslogs-stream-prefix : "awslogs-backend"
+          }
         },
-        {
-          "name": "DB_PASSWORD",
-          "value": "${var.ecs_container_db_password}"
-        },
-        {
-          "name": "DB_NAME",
-          "value": "${var.ecs_container_db_name}"
-        },
-        {
-          "name": "DB_PORT",
-          "value": "${var.ecs_container_db_port}"
-        },
-        {
-          "name": "DB_HOST",
-          "value": "${data.aws_db_instance.db_instance.endpoint}"
-        }
-      ]
-      "memory": 512,
-      "cpu": 256
-    }
-  ]
-  DEFINITION
+      }
+    ])
   requires_compatibilities = ["EC2"]
   network_mode             = "awsvpc"
   memory                   = 512
@@ -69,7 +73,7 @@ resource "aws_ecs_service" "soat_ecs_service" {
   cluster         = aws_ecs_cluster.soat_ecs_cluster.id
   task_definition = aws_ecs_task_definition.soat_ecs_cluster_task.arn
   launch_type     = "EC2"
-  desired_count   = 3
+  desired_count   = 1
 
   load_balancer {
     target_group_arn = aws_lb_target_group.soat_alb_target_group.arn

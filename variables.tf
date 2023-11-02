@@ -39,11 +39,6 @@ variable "ecs_container_db_name" {
   type    = string
 }
 
-variable "ecs_container_db_port" {
-  default = "5432"
-  type    = string
-}
-
 variable "aws_access_key" {
   description = "AWS Access Key"
   type        = string
