@@ -12,6 +12,10 @@ resource "aws_ecs_cluster" "soat_ecs_cluster" {
   name = "soat-tech-challenge-ecs-cluster"
 }
 
+data "aws_db_instance" "db_instance" {
+  db_instance_identifier = "soat-rds-postgres-db"
+}
+
 resource "aws_ecs_task_definition" "soat_ecs_cluster_task" {
   family                   = "soat-ecs-cluster-task"
   container_definitions    = <<DEFINITION
@@ -26,6 +30,28 @@ resource "aws_ecs_task_definition" "soat_ecs_cluster_task" {
           "hostPort": 8080
         }
       ],
+      "environment": [
+        {
+          "name": "DB_USERNAME",
+          "value": "${var.ecs_container_db_username}"
+        },
+        {
+          "name": "DB_PASSWORD",
+          "value": "${var.ecs_container_db_password}"
+        },
+        {
+          "name": "DB_NAME",
+          "value": "${var.ecs_container_db_name}"
+        },
+        {
+          "name": "DB_PORT",
+          "value": "${var.ecs_container_db_port}"
+        },
+        {
+          "name": "DB_HOST",
+          "value": "${data.aws_db_instance.db_instance.endpoint}"
+        }
+      ]
       "memory": 512,
       "cpu": 256
     }
@@ -47,21 +73,21 @@ resource "aws_ecs_service" "soat_ecs_service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.soat_alb_target_group.arn
-    container_name   = "soat-ecs-cluster-task" 
+    container_name   = "soat-ecs-cluster-task"
     container_port   = var.port
   }
 
   network_configuration {
-    subnets            = [
+    subnets = [
       var.subnet_a_id,
       var.subnet_b_id
     ]
-    security_groups  = [aws_security_group.soat_ecs_security_group.id]
+    security_groups = [aws_security_group.soat_ecs_security_group.id]
   }
 }
 
 resource "aws_security_group" "soat_ecs_security_group" {
-  vpc_id      = var.vpc_id
+  vpc_id = var.vpc_id
   ingress {
     from_port       = 0
     to_port         = 0
