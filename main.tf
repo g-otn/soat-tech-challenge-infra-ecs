@@ -2,10 +2,31 @@ resource "aws_ecr_repository" "soat_backend_image" {
   name = "registry.hub.docker.com/g0tn/soat-tech-challenge-backend"
 }
 
-resource "aws_instance" "ecs_host" {
-  ami           = "ami-0fa399d9c130ec923"
+resource "aws_launch_template" "soat_lauch_template" {
+  name_prefix   = "soat_lauch_template"
+  image_id      = "ami-0fa399d9c130ec923"
   instance_type = "t2.micro"
-  subnet_id     = var.subnet_a_id
+}
+
+resource "aws_autoscaling_group" "soat_autoscaling_group" {
+  desired_capacity    = 1
+  max_size            = 1
+  min_size            = 1
+  health_check_type   = "EC2"
+  vpc_zone_identifier = [var.subnet_a_id, var.subnet_b_id]
+
+  launch_template {
+    id      = aws_launch_template.soat_lauch_template.id
+    version = "$Latest"
+  }
+}
+
+resource "aws_ecs_capacity_provider" "soat_ecs_capacity_provider" {
+  name = "soat_ecs_capacity_provider"
+
+  auto_scaling_group_provider {
+    auto_scaling_group_arn = aws_autoscaling_group.soat_autoscaling_group.arn
+  }
 }
 
 resource "aws_ecs_cluster" "soat_ecs_cluster" {
@@ -13,11 +34,12 @@ resource "aws_ecs_cluster" "soat_ecs_cluster" {
 }
 
 data "aws_db_instance" "db_instance" {
-  db_instance_identifier = "soat-rds-postgres-db"
+  db_instance_identifier = "soat-tc-rds-db"
 }
 
 resource "aws_ecs_task_definition" "soat_ecs_cluster_task" {
-  family                = "soat-ecs-cluster-task"
+  family = "soat-ecs-cluster-task"
+
   container_definitions = jsonencode(
     [
       {
@@ -65,7 +87,12 @@ resource "aws_ecs_task_definition" "soat_ecs_cluster_task" {
   network_mode             = "awsvpc"
   memory                   = 512
   cpu                      = 256
+  task_role_arn            = aws_iam_role.soat_ecs_task_execution_role.arn
   execution_role_arn       = aws_iam_role.soat_ecs_task_execution_role.arn
+  runtime_platform {
+    cpu_architecture        = "X86_64"
+    operating_system_family = "LINUX"
+  }
 }
 
 resource "aws_ecs_service" "soat_ecs_service" {
@@ -74,6 +101,11 @@ resource "aws_ecs_service" "soat_ecs_service" {
   task_definition = aws_ecs_task_definition.soat_ecs_cluster_task.arn
   launch_type     = "EC2"
   desired_count   = 1
+
+  capacity_provider_strategy {
+    capacity_provider = aws_ecs_capacity_provider.soat_ecs_capacity_provider.name
+    weight            = 1
+  }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.soat_alb_target_group.arn
