@@ -1,29 +1,10 @@
 resource "aws_alb" "soat_alb" {
   name               = "soat-alb"
-  load_balancer_type = "application"
-  subnets            = [
-    var.subnet_a_id,
-    var.subnet_b_id
-  ]
+  subnets            = data.aws_subnets.private_subnets.ids
   security_groups = [aws_security_group.soat_alb_security_group.id]
-}
 
-resource "aws_security_group" "soat_alb_security_group" {
-
-  vpc_id = var.vpc_id
-
-  ingress {
-    from_port   = var.port
-    to_port     = var.port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+  tags = {
+    Name = "ecs-alb"
   }
 }
 
@@ -42,5 +23,5 @@ resource "aws_lb_target_group" "soat_alb_target_group" {
   port        = var.port
   protocol    = "HTTP"
   target_type = "ip"
-  vpc_id      = var.vpc_id
+  vpc_id      = data.aws_vpc.vpc.id
 }

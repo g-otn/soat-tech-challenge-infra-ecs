@@ -9,19 +9,10 @@ variable "port" {
   type        = string
 }
 
-variable "vpc_id" {
-  description = "VPC ID"
+variable "vpc_name" {
+  description = "VPC name"
   type        = string
-}
-
-variable "subnet_a_id" {
-  description = "SUBNET A ID"
-  type        = string
-}
-
-variable "subnet_b_id" {
-  description = "SUBNET B ID"
-  type        = string
+  default     = "soat-tech-challenge-vpc"
 }
 
 variable "ecs_container_db_username" {
