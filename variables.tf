@@ -9,12 +9,6 @@ variable "port" {
   type        = string
 }
 
-variable "vpc_name" {
-  description = "VPC name"
-  type        = string
-  default     = "soat-tech-challenge-vpc"
-}
-
 variable "ecs_container_db_username" {
   default = "postgres"
   type    = string
