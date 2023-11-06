@@ -23,7 +23,7 @@ jobs:
     uses: soat-tech-challenge/github-workflows/.github/workflows/terraform-plan.yml@main
     secrets: inherit
     with:
-      cloud_workspace: computing-staging
+      cloud_workspace: ${{ vars.TF_WORKSPACE }}
 
     permissions:
       contents: read
