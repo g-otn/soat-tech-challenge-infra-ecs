@@ -12,4 +12,4 @@ jobs:
     uses: soat-tech-challenge/github-workflows/.github/workflows/terraform-apply.yml@main
     secrets: inherit
     with:
-      cloud_workspace: database-staging
+      cloud_workspace: computing-staging
