@@ -2,10 +2,12 @@ terraform {
   required_version = ">= 0.12.26"
   cloud {
     organization = "soat-tech-challenge"
+
     workspaces {
-      name = "soat-terraform-cli"
+      name = "computing-staging"
     }
   }
+
 
   required_providers {
     aws = {
@@ -16,7 +18,7 @@ terraform {
 }
 
 provider "aws" {
-  region = var.aws_region
+  region     = var.aws_region
   access_key = var.aws_access_key
   secret_key = var.aws_secret_key
 }
