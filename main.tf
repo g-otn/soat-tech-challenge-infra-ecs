@@ -72,6 +72,7 @@ resource "aws_ecs_service" "this" {
   launch_type          = "FARGATE"
   scheduling_strategy  = "REPLICA"
   force_new_deployment = true
+  health_check_grace_period_seconds = 600
 
   network_configuration {
     assign_public_ip = true
