@@ -1,0 +1,30 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  tflint:
+    name: TFLint
+    uses: soat-tech-challenge/github-workflows/.github/workflows/tflint.yml@main
+
+  tfsec:
+    uses: soat-tech-challenge/github-workflows/.github/workflows/tfsec.yml@main
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+  terraform-plan:
+    name: Terraform Plan
+    uses: soat-tech-challenge/github-workflows/.github/workflows/terraform-plan.yml@main
+    secrets: inherit
+    with:
+      cloud_workspace: computing-staging
+
+    permissions:
+      contents: read
+      pull-requests: write
