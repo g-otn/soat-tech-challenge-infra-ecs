@@ -1,8 +1,0 @@
-aws_access_key = ""
-aws_secret_key = ""
-
-subnet_a_id = ""
-subnet_b_id = ""
-
-vpc_id = ""
-port = 0
