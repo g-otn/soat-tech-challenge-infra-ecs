@@ -8,4 +8,4 @@ jobs:
     uses: soat-tech-challenge/github-workflows/.github/workflows/terraform-destroy.yml@main
     secrets: inherit
     with:
-      workspace: ${{ vars.TF_WORKSPACE }}
+      cloud_workspace: ${{ vars.TF_WORKSPACE }}
