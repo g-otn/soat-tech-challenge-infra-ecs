@@ -8,6 +8,7 @@ provider "aws" {
     tags = {
       Organization = "soat-tech-challenge"
       Workspace    = "database-staging"
+      Exemplo      = "fase 3"
     }
   }
 }
