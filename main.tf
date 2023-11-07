@@ -10,7 +10,7 @@ resource "aws_ecs_task_definition" "this" {
   cpu                      = 256
   memory                   = 512
   requires_compatibilities = ["FARGATE"]
-  container_definitions    = jsonencode(
+  container_definitions = jsonencode(
     [
       {
         name : "soat-ecs-cluster-task",
@@ -51,12 +51,12 @@ resource "aws_ecs_task_definition" "this" {
           options : {
             awslogs-create-group : "true",
             awslogs-group : "awslogs-backend",
-            awslogs-region : "us-east-2",
+            awslogs-region : var.aws_region,
             awslogs-stream-prefix : "awslogs-backend"
           }
         },
       }
-    ])
+  ])
 
   runtime_platform {
     cpu_architecture        = "X86_64"
@@ -65,13 +65,13 @@ resource "aws_ecs_task_definition" "this" {
 }
 
 resource "aws_ecs_service" "this" {
-  name                 = "soat-ecs-service"
-  cluster              = aws_ecs_cluster.this.id
-  task_definition      = aws_ecs_task_definition.this.arn
-  desired_count        = 1
-  launch_type          = "FARGATE"
-  scheduling_strategy  = "REPLICA"
-  force_new_deployment = true
+  name                              = "soat-ecs-service"
+  cluster                           = aws_ecs_cluster.this.id
+  task_definition                   = aws_ecs_task_definition.this.arn
+  desired_count                     = 1
+  launch_type                       = "FARGATE"
+  scheduling_strategy               = "REPLICA"
+  force_new_deployment              = true
   health_check_grace_period_seconds = 600
 
   network_configuration {
@@ -82,7 +82,7 @@ resource "aws_ecs_service" "this" {
 
   load_balancer {
     container_name   = "soat-ecs-cluster-task"
-    container_port   = var.port
+    container_port   = var.ecs_service_lb_container_port
     target_group_arn = data.aws_alb_target_group.tg_alb.arn
   }
 }
