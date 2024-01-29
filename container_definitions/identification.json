@@ -1,0 +1,46 @@
+[
+  {
+    "name": "SOAT-TC_ECS_${id}_SVC_Main_Container",
+    "image": "registry.hub.docker.com/g0tn/soat-tech-challenge-service-${id}",
+    "cpu": 512,
+    "memory": 1024,
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": 8001,
+        "hostPort": 8001
+      }
+    ],
+    "environment": [
+      {
+        "name": "AWS_ACCESS_KEY",
+        "value": "${aws_access_key}"
+      },
+      {
+        "name": "AWS_SECRET_KEY",
+        "value": "${aws_secret_key}"
+      },
+      {
+        "name": "AWS_SESSION_TOKEN",
+        "value": "${aws_session_token}"
+      },
+      {
+        "name": "AWS_DYNAMODB_ENDPOINT",
+        "value": "${aws_dynamodb_endpoint}"
+      },
+      {
+        "name": "JWT_PUBLIC_KEY",
+        "value": "${client_jwt_pub_key}"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-create-group": "true",
+        "awslogs-group": "/aws/ecs/SOAT-TC_ECS_${id}_Service_Logs",
+        "awslogs-region": "${aws_region}",
+        "awslogs-stream-prefix": "${id}-svc"
+      }
+    }
+  }
+]

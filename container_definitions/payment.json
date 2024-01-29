@@ -7,8 +7,8 @@
     "essential": true,
     "portMappings": [
       {
-        "containerPort": 8002,
-        "hostPort": 8002
+        "containerPort": 8003,
+        "hostPort": 8003
       }
     ],
     "environment": [
@@ -33,8 +33,12 @@
         "value": "${client_jwt_pub_key}"
       },
       {
-        "name": "API_URL_IDENTIFICATION",
-        "value": "${lb_dns_name}"
+        "name": "API_URL_ORDER",
+        "value": "${api_url_order}"
+      },
+      {
+        "name": "API_URL_PRODUCTION",
+        "value": "${api_url_production}"
       }
     ],
     "logConfiguration": {
