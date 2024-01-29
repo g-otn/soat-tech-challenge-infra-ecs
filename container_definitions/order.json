@@ -34,7 +34,7 @@
       },
       {
         "name": "API_URL_IDENTIFICATION",
-        "value": "${lb_dns_name}"
+        "value": "${api_url_identification}"
       }
     ],
     "logConfiguration": {

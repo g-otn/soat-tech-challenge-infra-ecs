@@ -15,12 +15,6 @@ variable "order_svc_db_name" {
   default     = "postgres"
 }
 
-variable "order_svc_db_port" {
-  description = "Order Service RDS Database instance port"
-  type        = number
-  default     = 5432
-}
-
 // ---
 
 variable "payment_svc_db_username" {
@@ -38,10 +32,4 @@ variable "payment_svc_db_name" {
   description = "Payment Service RDS Database instance name"
   type        = string
   default     = "postgres"
-}
-
-variable "payment_svc_db_port" {
-  description = "Payment Service RDS Database instance port"
-  type        = number
-  default     = 5432
 }

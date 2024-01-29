@@ -19,6 +19,11 @@ terraform {
       source  = "hashicorp/tfe"
       version = "~> 0.51.1"
     }
+
+    template = {
+      source  = "hashicorp/template"
+      version = "~> 2.2.0"
+    }
   }
 }
 
