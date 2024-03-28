@@ -39,6 +39,22 @@
       {
         "name": "API_URL_PRODUCTION",
         "value": "${api_url_production}"
+      },
+      {
+        "name": "AWS_ACCESS_KEY",
+        "value": "${aws_access_key}"
+      },
+      {
+        "name": "AWS_SECRET_KEY",
+        "value": "${aws_secret_key}"
+      },
+      {
+        "name": "AWS_SESSION_TOKEN",
+        "value": "${aws_session_token}"
+      },
+      {
+        "name": "AWS_SQS_ENDPOINT",
+        "value": "${aws_sqs_endpoint}"
       }
     ],
     "logConfiguration": {
