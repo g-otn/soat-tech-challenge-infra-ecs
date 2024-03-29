@@ -70,3 +70,21 @@ resource "aws_lambda_function" "authorizer_client" {
     log_group  = aws_cloudwatch_log_group.lambda_authorizer_client.name
   }
 }
+
+resource "aws_lambda_permission" "execute_lambda1_from_apigateway" {
+  statement_id  = "AllowExecutionFromAPIGateway_SOAT_TC_Lambda_Identification_NationalID"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.identification_nationalid.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${local.api_execution_arn}/*/*"
+}
+
+resource "aws_lambda_permission" "execute_lambda2_from_apigateway" {
+  statement_id  = "AllowExecutionFromAPIGateway_SOAT_TC_Lambda_Authorizer_Client"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.authorizer_client.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${local.api_execution_arn}/*/*"
+}
