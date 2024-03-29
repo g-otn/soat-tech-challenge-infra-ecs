@@ -10,37 +10,36 @@ locals {
 
 locals {
   identification_svc_container_definition = templatefile("./container_definitions/identification.json", {
-    id = "identification"
-
-    client_jwt_pub_key = var.client_jwt_public_key
+    id         = "identification"
+    aws_region = var.aws_region
 
     aws_access_key    = var.aws_access_key
     aws_secret_key    = var.aws_secret_key
     aws_session_token = var.aws_session_token
 
     aws_dynamodb_endpoint = local.dynamodb_endpoint
-
-    aws_region = var.aws_region
   })
   order_svc_container_definition = templatefile("./container_definitions/order.json", {
-    id = "order"
+    id         = "order"
+    aws_region = var.aws_region
 
-    db_username            = var.order_svc_db_username
-    db_password            = var.order_svc_db_password
-    db_name                = var.order_svc_db_name
-    db_host                = data.tfe_outputs.database.values.order_svc_db.endpoint
+    db_username = var.order_svc_db_username
+    db_password = var.order_svc_db_password
+    db_name     = var.order_svc_db_name
+    db_host     = data.tfe_outputs.database.values.order_svc_db.endpoint
+
     client_jwt_pub_key     = var.client_jwt_public_key
     api_url_identification = "${local.alb_url}/identification"
-
-    aws_region = var.aws_region
   })
   payment_svc_container_definition = templatefile("./container_definitions/payment.json", {
-    id = "payment"
+    id         = "payment"
+    aws_region = var.aws_region
 
-    db_username        = var.payment_svc_db_username
-    db_password        = var.payment_svc_db_password
-    db_name            = var.payment_svc_db_name
-    db_host            = data.tfe_outputs.database.values.payment_svc_db.endpoint
+    db_username = var.payment_svc_db_username
+    db_password = var.payment_svc_db_password
+    db_name     = var.payment_svc_db_name
+    db_host     = data.tfe_outputs.database.values.payment_svc_db.endpoint
+
     client_jwt_pub_key = var.client_jwt_public_key
     api_url_order      = "${local.alb_url}/order"
     api_url_production = "${local.alb_url}/production"
@@ -50,11 +49,10 @@ locals {
     aws_session_token = var.aws_session_token
 
     aws_sqs_endpoint = local.sqs_endpoint
-
-    aws_region = var.aws_region
   })
   production_svc_container_definition = templatefile("./container_definitions/production.json", {
-    id = "production"
+    id         = "production"
+    aws_region = var.aws_region
 
     client_jwt_pub_key = var.client_jwt_public_key
 
@@ -64,8 +62,6 @@ locals {
 
     aws_dynamodb_endpoint = local.dynamodb_endpoint
     aws_sqs_endpoint      = local.sqs_endpoint
-
-    aws_region = var.aws_region
   })
 }
 

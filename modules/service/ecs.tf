@@ -29,6 +29,9 @@ resource "aws_ecs_service" "this" {
   force_new_deployment              = true
   health_check_grace_period_seconds = 180
 
+  # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-exec.html#ecs-exec-enabling-and-using
+  enable_execute_command = true
+
   network_configuration {
     assign_public_ip = true
     subnets          = var.subnet_ids
