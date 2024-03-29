@@ -27,10 +27,6 @@
       {
         "name": "AWS_DYNAMODB_ENDPOINT",
         "value": "${aws_dynamodb_endpoint}"
-      },
-      {
-        "name": "JWT_PUBLIC_KEY",
-        "value": "${client_jwt_pub_key}"
       }
     ],
     "logConfiguration": {

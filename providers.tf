@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 0.12.26"
+  required_version = ">= 1.7.5"
 
   cloud {
     organization = "soat-tech-challenge"
@@ -12,17 +12,17 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "5.34.0"
+      version = "~> 5.41"
     }
 
     tfe = {
       source  = "hashicorp/tfe"
-      version = "~> 0.51.1"
+      version = "~> 0.53.0"
     }
 
-    template = {
-      source  = "hashicorp/template"
-      version = "~> 2.2.0"
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.4"
     }
   }
 }
