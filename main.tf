@@ -1,5 +1,5 @@
 locals {
-  alb_url           = data.tfe_outputs.network.values.lb_lb.dns_name
+  alb_url           = "http://${data.tfe_outputs.network.values.lb_lb.dns_name}"
   dynamodb_endpoint = "dynamodb.${var.aws_region}.amazonaws.com"
   sqs_endpoint      = data.tfe_outputs.network.values.vpc_endpoint_sqs.dns_entry[0].dns_name
 

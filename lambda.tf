@@ -24,6 +24,7 @@ resource "aws_lambda_function" "identification_nationalid" {
   description   = "Generates Client JWT using National ID"
   role          = data.aws_iam_role.lab_role.arn
   handler       = "index.handler"
+  timeout       = 10 # debug
 
   source_code_hash = data.archive_file.lambda_identification_nationalid.output_base64sha256
 
@@ -31,7 +32,7 @@ resource "aws_lambda_function" "identification_nationalid" {
 
   environment {
     variables = {
-      BACKEND_URL     = local.alb_url
+      BACKEND_URL     = "${local.alb_url}/identification"
       JWT_PRIVATE_KEY = var.client_jwt_private_key
     }
   }
@@ -60,8 +61,7 @@ resource "aws_lambda_function" "authorizer_client" {
 
   environment {
     variables = {
-      BACKEND_URL     = local.alb_url
-      JWT_PRIVATE_KEY = var.client_jwt_private_key
+      JWT_PUBLIC_KEY = var.client_jwt_public_key
     }
   }
 
